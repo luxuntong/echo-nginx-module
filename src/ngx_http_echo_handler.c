@@ -32,7 +32,7 @@ ngx_http_echo_wev_handler(ngx_http_request_t *r)
     ngx_int_t                    rc;
     ngx_http_echo_ctx_t         *ctx;
 
-    dd("wev handler");
+    logInfo("wev handler");
 
     ctx = ngx_http_get_module_ctx(r, ngx_http_echo_module);
 
@@ -41,7 +41,7 @@ ngx_http_echo_wev_handler(ngx_http_request_t *r)
         return;
     }
 
-    dd("waiting: %d, done: %d", (int) ctx->waiting, (int) ctx->done);
+    logInfo("waiting: %d, done: %d", (int) ctx->waiting, (int) ctx->done);
 
     if (ctx->waiting && ! ctx->done) {
 
@@ -70,7 +70,7 @@ ngx_http_echo_wev_handler(ngx_http_request_t *r)
 
     rc = ngx_http_echo_run_cmds(r);
 
-    dd("rc: %d", (int) rc);
+    logInfo("rc: %d", (int) rc);
 
     if (rc == NGX_ERROR || rc == NGX_DONE) {
         ngx_http_finalize_request(r, rc);
@@ -78,7 +78,7 @@ ngx_http_echo_wev_handler(ngx_http_request_t *r)
     }
 
     if (rc == NGX_AGAIN) {
-        dd("mark busy %d for %.*s", (int) ctx->next_handler_cmd,
+        logInfo("mark busy %d for %.*s", (int) ctx->next_handler_cmd,
            (int) r->uri.len,
            r->uri.data);
 
@@ -111,7 +111,7 @@ ngx_http_echo_handler(ngx_http_request_t *r)
     rc = ngx_http_echo_run_cmds(r);
 
     dd("run cmds returned %d", (int) rc);
-	logInfo("hello :%s", "hello");
+	logInfo("hello :%s", "hello world");
     if (rc == NGX_ERROR
         || rc == NGX_OK
         || rc == NGX_DONE
