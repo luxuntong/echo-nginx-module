@@ -45,13 +45,13 @@ ngx_http_echo_filter_init(ngx_conf_t *cf)
     }
 
     if (multi_http_blocks || emcf->requires_filter) {
-        dd("top header filter: %ld",
+        logInfo("top header filter: %ld",
            (unsigned long) ngx_http_top_header_filter);
 
         ngx_http_echo_next_header_filter = ngx_http_top_header_filter;
         ngx_http_top_header_filter = ngx_http_echo_header_filter;
 
-        dd("top body filter: %ld", (unsigned long) ngx_http_top_body_filter);
+        logInfo("top body filter: %ld", (unsigned long) ngx_http_top_body_filter);
 
         ngx_http_echo_next_body_filter = ngx_http_top_body_filter;
         ngx_http_top_body_filter  = ngx_http_echo_body_filter;
@@ -153,7 +153,7 @@ ngx_http_echo_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
     last = 0;
 
     for (cl = in; cl; cl = cl->next) {
-        dd("cl %p, special %d", cl, ngx_buf_special(cl->buf));
+        logInfo("cl %p, special %d", cl, ngx_buf_special(cl->buf));
 
         if (cl->buf->last_buf || cl->buf->last_in_chain) {
             cl->buf->last_buf = 0;
@@ -163,7 +163,7 @@ ngx_http_echo_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
         }
     }
 
-    dd("in %p, last %d", in, (int) last);
+    logInfo("in %p, last %d", in, (int) last);
 
     if (in) {
         rc = ngx_http_echo_next_body_filter(r, in);
@@ -174,25 +174,25 @@ ngx_http_echo_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
         }
 #endif
 
-        dd("next filter returns %d, last %d", (int) rc, (int) last);
+        logInfo("next filter returns %d, last %d", (int) rc, (int) last);
 
         if (rc == NGX_ERROR || rc > NGX_OK || !last) {
             return rc;
         }
     }
 
-    dd("exec filter cmds for after body cmds");
+    logInfo("exec filter cmds for after body cmds");
 
     rc = ngx_http_echo_exec_filter_cmds(r, ctx, conf->after_body_cmds,
                                         &ctx->next_after_body_cmd);
     if (rc == NGX_ERROR || rc > NGX_OK) {
-        dd("FAILED: exec filter cmds for after body cmds");
+        logInfo("FAILED: exec filter cmds for after body cmds");
         return NGX_ERROR;
     }
 
     ctx->skip_filter = 1;
 
-    dd("after body cmds executed...terminating...");
+    logInfo("after body cmds executed...terminating...");
 
     /* XXX we can NOT use
      * ngx_http_send_special(r, NGX_HTTP_LAST) here
@@ -263,7 +263,7 @@ ngx_http_echo_exec_filter_cmds(ngx_http_request_t *r,
         switch (cmd->opcode) {
         case echo_opcode_echo_before_body:
         case echo_opcode_echo_after_body:
-            dd("exec echo_before_body or echo_after_body...");
+            logInfo("exec echo_before_body or echo_after_body...");
 
             rc = ngx_http_echo_exec_echo(r, ctx, computed_args,
                                          1 /* in filter */, opts);

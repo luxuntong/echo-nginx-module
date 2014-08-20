@@ -77,7 +77,7 @@ ngx_http_echo_exec_echo_foreach_split(ngx_http_request_t *r,
 
     compound  = &computed_arg_elts[1];
 
-    dd("HEY coumpound len: %u", (int) compound->len);
+    logInfo("HEY coumpound len: %u", (int) compound->len);
 
     ctx->foreach = ngx_palloc(r->pool, sizeof(ngx_http_echo_foreach_ctx_t));
 
@@ -102,10 +102,10 @@ ngx_http_echo_exec_echo_foreach_split(ngx_http_request_t *r,
     while ((last = ngx_http_echo_strlstrn(pos, end, delimiter->data,
                                           delimiter->len - 1)) != NULL)
     {
-        dd("entered the loop");
+        logInfo("entered the loop");
 
         if (last == pos) {
-            dd("!!! len == 0");
+            logInfo("!!! len == 0");
             pos = last + delimiter->len;
             continue;
         }
@@ -171,7 +171,7 @@ ngx_http_echo_exec_echo_end(ngx_http_request_t *r,
         return NGX_OK;
     }
 
-    dd("echo_end: ++ next_choice (total: %u): %u",
+    logInfo("echo_end: ++ next_choice (total: %u): %u",
        (unsigned) ctx->foreach->choices->nelts,
        (unsigned) ctx->foreach->next_choice);
 

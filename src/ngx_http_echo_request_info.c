@@ -35,7 +35,7 @@ ngx_http_echo_post_read_request_body(ngx_http_request_t *r)
 
     ctx = ngx_http_get_module_ctx(r, ngx_http_echo_module);
 
-    dd("wait read request body %d", (int) ctx->wait_read_request_body);
+    logInfo("wait read request body %d", (int) ctx->wait_read_request_body);
 
     if (ctx->wait_read_request_body) {
         ctx->waiting = 0;
@@ -235,7 +235,7 @@ ngx_http_echo_client_request_headers_variable(ngx_http_request_t *r,
                     continue;
                 }
 
-                dd("found first at %d", (int) i);
+                logInfo("found first at %d", (int) i);
                 first = b;
             }
 
@@ -298,7 +298,7 @@ ngx_http_echo_client_request_headers_variable(ngx_http_request_t *r,
                     continue;
                 }
 
-                dd("found first");
+                logInfo("found first");
                 found = 1;
             }
 
@@ -312,7 +312,7 @@ ngx_http_echo_client_request_headers_variable(ngx_http_request_t *r,
             }
 
             if (b == first) {
-                dd("request line: %.*s", (int) mr->request_line.len,
+                logInfo("request line: %.*s", (int) mr->request_line.len,
                    mr->request_line.data);
 
                 last = ngx_copy(last,
@@ -336,7 +336,7 @@ ngx_http_echo_client_request_headers_variable(ngx_http_request_t *r,
                     j++;
                     if (p + 1 == last) {
                         /* XXX this should not happen */
-                        dd("found string end!!");
+                        logInfo("found string end!!");
 
                     } else if (*(p + 1) == LF) {
                         *p = CR;
@@ -451,7 +451,7 @@ ngx_http_echo_response_status_variable(ngx_http_request_t *r,
     u_char                      *p;
 
     if (r->headers_out.status) {
-        dd("headers out status: %d", (int) r->headers_out.status);
+        logInfo("headers out status: %d", (int) r->headers_out.status);
 
         p = ngx_palloc(r->pool, NGX_INT_T_LEN);
         if (p == NULL) {

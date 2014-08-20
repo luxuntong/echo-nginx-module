@@ -5,32 +5,31 @@ import re
 def FindString(filePath):
 	fileObj = open(filePath, 'r')
 	j = 0
-	pattern = re.compile(r'(\t*)(dd)(\(")')
+	pattern = re.compile(r'(\s+)(dd)(\(")')
 	for line in fileObj:
 		j = j + 1
 		strFind = pattern.search(line)
 		if (strFind):
-			print(line)
 			return True
 	return False
 
 def ReplaceFile(filePath):
 	fileRead = open(filePath, 'r')
 	fileWrite = open(filePath + '.new', 'w')
-	pattern = re.compile(r'(\t+)(dd)(\(")')
+	pattern = re.compile(r'(\s+)(dd)(\(")')
 	count = 0
 	for line in fileRead:
 		strNew = line
 		strFind = pattern.search(line)
 		if (strFind):
-			print('#####' + filePath)
 			if(count == 0):
 				count = 1
-				print('#####' + filePath)
-			pattern.sub(r'\1logInfo\2', strNew)
-			print(strNew)
+			strNew = pattern.sub(r'\1logInfo\3', strNew)
+			print('###' + strNew)
 		fileWrite.writelines(strNew)
-#	os.rename(filePath + '.new', filePath)
+	fileRead.close()
+	fileWrite.close()
+	os.rename(filePath + '.new', filePath)
 		
 
 def listyoudir(level, path): 

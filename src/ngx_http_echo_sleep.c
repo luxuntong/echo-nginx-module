@@ -44,7 +44,7 @@ ngx_http_echo_exec_echo_sleep(ngx_http_request_t *r,
         return NGX_HTTP_BAD_REQUEST;
     }
 
-    dd("adding timer with delay %lu ms, r:%.*s", (unsigned long) delay,
+    logInfo("adding timer with delay %lu ms, r:%.*s", (unsigned long) delay,
             (int) r->uri.len, r->uri.data);
 
     ngx_add_timer(&ctx->sleep, (ngx_msec_t) delay);
@@ -74,7 +74,7 @@ ngx_http_echo_post_sleep(ngx_http_request_t *r)
     ngx_http_echo_ctx_t         *ctx;
     /* ngx_int_t                    rc; */
 
-    dd("post sleep, r:%.*s", (int) r->uri.len, r->uri.data);
+    logInfo("post sleep, r:%.*s", (int) r->uri.len, r->uri.data);
 
     ctx = ngx_http_get_module_ctx(r, ngx_http_echo_module);
 
@@ -85,20 +85,20 @@ ngx_http_echo_post_sleep(ngx_http_request_t *r)
     ctx->waiting = 0;
     ctx->done = 1;
 
-    dd("sleep: after get module ctx");
+    logInfo("sleep: after get module ctx");
 
-    dd("timed out? %d", ctx->sleep.timedout);
-    dd("timer set? %d", ctx->sleep.timer_set);
+    logInfo("timed out? %d", ctx->sleep.timedout);
+    logInfo("timer set? %d", ctx->sleep.timer_set);
 
     if (!ctx->sleep.timedout) {
-        dd("HERE reached!");
+        logInfo("HERE reached!");
         return;
     }
 
     ctx->sleep.timedout = 0;
 
     if (ctx->sleep.timer_set) {
-        dd("deleting timer for echo_sleep");
+        logInfo("deleting timer for echo_sleep");
 
         ngx_del_timer(&ctx->sleep);
     }
@@ -147,11 +147,11 @@ ngx_http_echo_sleep_event_handler(ngx_event_t *ev)
 
 #if defined(nginx_version)
 
-    dd("before run posted requests");
+    logInfo("before run posted requests");
 
     ngx_http_run_posted_requests(c);
 
-    dd("after run posted requests");
+    logInfo("after run posted requests");
 
 #endif
 }
@@ -176,7 +176,7 @@ ngx_http_echo_exec_echo_blocking_sleep(ngx_http_request_t *r,
         return NGX_HTTP_BAD_REQUEST;
     }
 
-    dd("blocking delay: %lu ms", (unsigned long) delay);
+    logInfo("blocking delay: %lu ms", (unsigned long) delay);
 
     ngx_msleep((ngx_msec_t) delay);
 
@@ -190,7 +190,7 @@ ngx_http_echo_sleep_cleanup(void *data)
     ngx_http_request_t      *r = data;
     ngx_http_echo_ctx_t         *ctx;
 
-    dd("echo sleep cleanup");
+    logInfo("echo sleep cleanup");
 
     ctx = ngx_http_get_module_ctx(r, ngx_http_echo_module);
     if (ctx == NULL) {
@@ -198,11 +198,11 @@ ngx_http_echo_sleep_cleanup(void *data)
     }
 
     if (ctx->sleep.timer_set) {
-        dd("cleanup: deleting timer for echo_sleep");
+        logInfo("cleanup: deleting timer for echo_sleep");
 
         ngx_del_timer(&ctx->sleep);
         return;
     }
 
-    dd("cleanup: timer not set");
+    logInfo("cleanup: timer not set");
 }

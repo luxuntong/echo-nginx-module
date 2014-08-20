@@ -69,7 +69,7 @@ ngx_http_echo_eval_cmd_args(ngx_http_request_t *r,
                     opt->len = raw->len - 1;
                     opt->data = raw->data + 1;
 
-                    dd("pushing opt: %.*s", (int) opt->len, opt->data);
+                    logInfo("pushing opt: %.*s", (int) opt->len, opt->data);
 
                     continue;
                 }
@@ -85,7 +85,7 @@ ngx_http_echo_eval_cmd_args(ngx_http_request_t *r,
         }
 
         if (value[i].lengths == NULL) { /* does not contain vars */
-            dd("Using raw value \"%.*s\"", (int) raw->len, raw->data);
+            logInfo("Using raw value \"%.*s\"", (int) raw->len, raw->data);
             *arg = *raw;
 
         } else {
@@ -97,7 +97,7 @@ ngx_http_echo_eval_cmd_args(ngx_http_request_t *r,
             }
         }
 
-        dd("pushed arg: %.*s", (int) arg->len, arg->data);
+        logInfo("pushed arg: %.*s", (int) arg->len, arg->data);
     }
 
     return NGX_OK;

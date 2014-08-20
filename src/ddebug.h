@@ -110,6 +110,7 @@ static void dd_enter() {
 #endif
 
 void logInfo(const char* fmt, ...);
+pthread_mutex_t mutexAll;
 
 
 

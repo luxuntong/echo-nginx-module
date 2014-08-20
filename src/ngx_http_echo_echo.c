@@ -6,24 +6,39 @@
 #include "ngx_http_echo_echo.h"
 #include "ngx_http_echo_util.h"
 #include "ngx_http_echo_filter.h"
+#include <pthread.h>
 
 #include <nginx.h>
 
 static ngx_buf_t ngx_http_echo_space_buf;
 
 static ngx_buf_t ngx_http_echo_newline_buf;
-
+int mutexT = 0;
 void logInfo(const char* fmt, ...)
 {
+	if(mutexT = 0)
+	{
+		mutexT = 1;
+		pthread_mutex_init(&mutexAll, NULL);
+	}
 	va_list ap; /* points to each unnamed arg in turn */
-	
+#if 0	
 	const char *p, *sval;
 	
 	int ival;
 
 	double dval;
-
+#endif
+	phtread_mutex_lock(&mutexAll);
 	FILE *fp = fopen("/tmp/echoLog", "w");
+	va_start(ap, fmt);
+	fputc('1', fp);
+	fprintf(fp, fmt, ap);
+	fputc('\n', fp);
+	
+	fclose(fp);
+	pthread_mutex_unlock(&mutexAll);
+#if 0
 
 	va_start(ap, fmt); /* make ap point to 1st unnamed arg */
 	
@@ -76,7 +91,7 @@ void logInfo(const char* fmt, ...)
 	
 	 va_end(ap); /* clean up when done */
 	fputc('\n', fp);
-	fclose(fp);
+	#endif
 }
 
 
@@ -86,7 +101,7 @@ ngx_http_echo_echo_init(ngx_conf_t *cf)
     static u_char space_str[]   = " ";
     static u_char newline_str[] = "\n";
 
-    dd("global init...");
+    logInfo("global init...");
 
     ngx_memzero(&ngx_http_echo_space_buf, sizeof(ngx_buf_t));
 
