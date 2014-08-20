@@ -63,3 +63,6 @@ build1[0-9]
 analyze
 Makefile
 *.plist
+*.sh
+make
+.gitignore

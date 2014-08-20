@@ -4,15 +4,17 @@
 #include <ngx_core.h>
 #include <ngx_http.h>
 
-#if defined(DDEBUG) && (DDEBUG)
+#if defined(DDEBUG) && (DDEBUG)///
 
-#   if (NGX_HAVE_VARIADIC_MACROS)
 
-#       define dd(...) fprintf(stderr, "echo *** %s: ", __func__); \
+#if (NGX_HAVE_VARIADIC_MACROS)//
+
+#define dd(...) fprintf(stderr, "echo *** %s: ", __func__); \
             fprintf(stderr, __VA_ARGS__); \
             fprintf(stderr, " at %s line %d.\n", __FILE__, __LINE__)
 
-#   else
+
+#else
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -22,11 +24,11 @@
 static void dd(const char * fmt, ...) {
 }
 
-#    endif
+#endif//
 
-#   if DDEBUG > 1
+#if DDEBUG > 1
 
-#       define dd_enter() dd_enter_helper(r, __func__)
+#define dd_enter() dd_enter_helper(r, __func__)
 
 static void dd_enter_helper(ngx_http_request_t *r, const char *func) {
     ngx_http_posted_request_t       *pr;
@@ -50,11 +52,11 @@ static void dd_enter_helper(ngx_http_request_t *r, const char *func) {
     fprintf(stderr, "\n");
 }
 
-#   else
+#else
 
-#       define dd_enter()
+#define dd_enter()
 
-#   endif
+#endif
 
 #else
 
@@ -65,6 +67,8 @@ static void dd_enter_helper(ngx_http_request_t *r, const char *func) {
 #       define dd_enter()
 
 #   else
+void logInfo()
+{}
 
 #include <stdarg.h>
 
@@ -74,7 +78,7 @@ static void dd(const char * fmt, ...) {
 static void dd_enter() {
 }
 
-#   endif
+#endif
 
 #endif
 
@@ -104,6 +108,10 @@ static void dd_enter() {
 #define dd_check_write_event_handler(r)
 
 #endif
+
+void logInfo(const char* fmt, ...);
+
+
 
 #endif /* DDEBUG_H */
 

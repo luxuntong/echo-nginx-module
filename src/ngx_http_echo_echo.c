@@ -13,6 +13,72 @@ static ngx_buf_t ngx_http_echo_space_buf;
 
 static ngx_buf_t ngx_http_echo_newline_buf;
 
+void logInfo(const char* fmt, ...)
+{
+	va_list ap; /* points to each unnamed arg in turn */
+	
+	const char *p, *sval;
+	
+	int ival;
+
+	double dval;
+
+	FILE *fp = fopen("/tmp/echoLog", "w");
+
+	va_start(ap, fmt); /* make ap point to 1st unnamed arg */
+	
+	for (p = fmt; *p; p++) 
+	{
+	
+		if (*p != '%') {
+	
+			fputc(*p, fp);
+	
+			continue;
+	
+		}
+	
+		switch (*++p) {
+	
+			case 'd':
+	
+			   ival = va_arg(ap, int);
+	
+			   fprintf(fp, "%d", ival);
+	
+			   break;
+	
+			case 'f':
+	
+			   dval = va_arg(ap, double);
+	
+			   fprintf(fp, "%f", dval);
+	
+			   break;
+	
+			case 's':
+	
+			   for (sval = va_arg(ap, char *); *sval; sval++)
+	
+				   fputc(*sval, fp);
+	
+			   break;
+	
+			default:
+	
+			   fputc(*p, fp);
+	
+			   break;
+	
+		}
+	
+	 }
+	
+	 va_end(ap); /* clean up when done */
+	fputc('\n', fp);
+	fclose(fp);
+}
+
 
 ngx_int_t
 ngx_http_echo_echo_init(ngx_conf_t *cf)

@@ -111,7 +111,7 @@ ngx_http_echo_handler(ngx_http_request_t *r)
     rc = ngx_http_echo_run_cmds(r);
 
     dd("run cmds returned %d", (int) rc);
-
+	logInfo("hello :%s", "hello");
     if (rc == NGX_ERROR
         || rc == NGX_OK
         || rc == NGX_DONE
