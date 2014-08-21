@@ -107,7 +107,7 @@ ngx_http_echo_handler(ngx_http_request_t *r)
     ngx_http_echo_ctx_t         *ctx;
 
     logInfo("subrequest in memory: %d", (int) r->subrequest_in_memory);
-
+	logInfo("hello");
     rc = ngx_http_echo_run_cmds(r);
 
     logInfo("run cmds returned %d", (int) rc);

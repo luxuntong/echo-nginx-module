@@ -13,14 +13,10 @@
 static ngx_buf_t ngx_http_echo_space_buf;
 
 static ngx_buf_t ngx_http_echo_newline_buf;
-int mutexT = 0;
+ngx_atomic_t lockLog = 0;
+
 void logInfo(const char* fmt, ...)
 {
-	if(mutexT = 0)
-	{
-		mutexT = 1;
-		pthread_mutex_init(&mutexAll, NULL);
-	}
 	va_list ap; /* points to each unnamed arg in turn */
 #if 0	
 	const char *p, *sval;
@@ -29,15 +25,21 @@ void logInfo(const char* fmt, ...)
 
 	double dval;
 #endif
-	phtread_mutex_lock(&mutexAll);
-	FILE *fp = fopen("/tmp/echoLog", "w");
+	ngx_spinlock(&lockLog, 1, 80);
+//	chmod("/tmp/echoLog", 0x3f);
+	FILE *fp = fopen("/tmp/echoLog", "a");
+	if(fp == NULL)
+	{
+		ngx_unlock(&lockLog);
+		return;
+	}
 	va_start(ap, fmt);
-	fputc('1', fp);
+	fputc('2', fp);
 	fprintf(fp, fmt, ap);
 	fputc('\n', fp);
 	
 	fclose(fp);
-	pthread_mutex_unlock(&mutexAll);
+	ngx_unlock(&lockLog);
 #if 0
 
 	va_start(ap, fmt); /* make ap point to 1st unnamed arg */
