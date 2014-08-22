@@ -1,3 +1,4 @@
+#include "logInfo.h"
 #ifndef DDEBUG
 #define DDEBUG 0
 #endif
@@ -14,93 +15,6 @@
 static ngx_buf_t ngx_http_echo_space_buf;
 
 static ngx_buf_t ngx_http_echo_newline_buf;
-ngx_atomic_t lockLog = 0;
-
-void logInfo(const char* fmt, ...)
-{
-	va_list ap; /* points to each unnamed arg in turn */
-#if 0	
-	const char *p, *sval;
-	
-	int ival;
-
-	double dval;
-#endif
-	u_char buf[1024];
-	int ret;
-	u_char *pLen;
-	ngx_spinlock(&lockLog, 1, 80);
-//	chmod("/tmp/echoLog", 0x3f);
-    umask(0);
-	int fd = open("/tmp/echoLog", O_WRONLY | O_CREAT | O_APPEND,  S_IROTH | S_IWOTH | S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-	
-	if(fd == -1)
-	{
-		ngx_unlock(&lockLog);
-		return;
-	}
-	va_start(ap, fmt);
-	pLen = ngx_snprintf(buf, 1024, fmt, ap);
-	ret = write(fd, buf, pLen - buf);
-	ret = write(fd, "\n", strlen("\n"));
-	ret = ret;
-	close(fd);
-	ngx_unlock(&lockLog);
-#if 0
-
-	va_start(ap, fmt); /* make ap point to 1st unnamed arg */
-	
-	for (p = fmt; *p; p++) 
-	{
-	
-		if (*p != '%') {
-	
-			fputc(*p, fp);
-	
-			continue;
-	
-		}
-	
-		switch (*++p) {
-	
-			case 'd':
-	
-			   ival = va_arg(ap, int);
-	
-			   fprintf(fp, "%d", ival);
-	
-			   break;
-	
-			case 'f':
-	
-			   dval = va_arg(ap, double);
-	
-			   fprintf(fp, "%f", dval);
-	
-			   break;
-	
-			case 's':
-	
-			   for (sval = va_arg(ap, char *); *sval; sval++)
-	
-				   fputc(*sval, fp);
-	
-			   break;
-	
-			default:
-	
-			   fputc(*p, fp);
-	
-			   break;
-	
-		}
-	
-	 }
-	
-	 va_end(ap); /* clean up when done */
-	fputc('\n', fp);
-	#endif
-}
 
 
 ngx_int_t

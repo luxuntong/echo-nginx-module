@@ -109,8 +109,6 @@ static void dd_enter() {
 
 #endif
 
-void logInfo(const char* fmt, ...);
-
 
 
 #endif /* DDEBUG_H */

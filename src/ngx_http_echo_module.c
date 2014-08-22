@@ -1,3 +1,4 @@
+#include "logInfo.h"
 
 /*
  * Copyright (C) Yichun Zhang (agentzh)

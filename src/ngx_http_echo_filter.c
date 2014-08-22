@@ -1,3 +1,4 @@
+#include "logInfo.h"
 #ifndef DDEBUG
 #define DDEBUG 0
 #endif
