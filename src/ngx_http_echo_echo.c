@@ -9,6 +9,7 @@
 #include <pthread.h>
 
 #include <nginx.h>
+#include <fcntl.h>
 
 static ngx_buf_t ngx_http_echo_space_buf;
 
@@ -25,20 +26,25 @@ void logInfo(const char* fmt, ...)
 
 	double dval;
 #endif
+	u_char buf[1024];
+	int ret;
+	u_char *pLen;
 	ngx_spinlock(&lockLog, 1, 80);
 //	chmod("/tmp/echoLog", 0x3f);
-	FILE *fp = fopen("/tmp/echoLog", "a");
-	if(fp == NULL)
+    umask(0);
+	int fd = open("/tmp/echoLog", O_WRONLY | O_CREAT | O_APPEND,  S_IROTH | S_IWOTH | S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+	
+	if(fd == -1)
 	{
 		ngx_unlock(&lockLog);
 		return;
 	}
 	va_start(ap, fmt);
-	fputc('2', fp);
-	fprintf(fp, fmt, ap);
-	fputc('\n', fp);
-	
-	fclose(fp);
+	pLen = ngx_snprintf(buf, 1024, fmt, ap);
+	ret = write(fd, buf, pLen - buf);
+	ret = write(fd, "\n", strlen("\n"));
+	ret = ret;
+	close(fd);
 	ngx_unlock(&lockLog);
 #if 0
 
