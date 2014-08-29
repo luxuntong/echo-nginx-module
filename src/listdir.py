@@ -5,7 +5,7 @@ import re
 def FindString(filePath):
 	fileObj = open(filePath, 'r')
 	j = 0
-	pattern = re.compile(r'(\s+)(dd)(\(")')
+	pattern = re.compile(r'(\s+)(logInfo)(\(")')
 	for line in fileObj:
 		j = j + 1
 		strFind = pattern.search(line)
@@ -16,7 +16,7 @@ def FindString(filePath):
 def ReplaceFile(filePath):
 	fileRead = open(filePath, 'r')
 	fileWrite = open(filePath + '.new', 'w')
-	pattern = re.compile(r'(\s+)(dd)(\(")')
+	pattern = re.compile(r'(\s+)(logInfo)(\(")')
 	count = 0
 	for line in fileRead:
 		strNew = line
@@ -24,7 +24,7 @@ def ReplaceFile(filePath):
 		if (strFind):
 			if(count == 0):
 				count = 1
-			strNew = pattern.sub(r'\1logInfo\3', strNew)
+			strNew = pattern.sub(r'\1LXTLOG\3', strNew)
 			print('###' + strNew)
 		fileWrite.writelines(strNew)
 	fileRead.close()
@@ -51,4 +51,4 @@ def listyoudir(level, path):
 Rootpath = os.path.abspath('.') 
 print (Rootpath) 
 print (sys.argv[1])
-listyoudir(0, Rootpath)
+listyoudir(0, sys.argv[1])

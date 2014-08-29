@@ -1,4 +1,4 @@
-#include "logInfo.h"
+#include <logInfo.h>
 
 /*
  * Copyright (C) Yichun Zhang (agentzh)
@@ -70,7 +70,7 @@ ngx_http_echo_eval_cmd_args(ngx_http_request_t *r,
                     opt->len = raw->len - 1;
                     opt->data = raw->data + 1;
 
-                    logInfo("pushing opt: %.*s", (int) opt->len, opt->data);
+                    LXTLOG("pushing opt: %.*s", (int) opt->len, opt->data);
 
                     continue;
                 }
@@ -86,7 +86,7 @@ ngx_http_echo_eval_cmd_args(ngx_http_request_t *r,
         }
 
         if (value[i].lengths == NULL) { /* does not contain vars */
-            logInfo("Using raw value \"%.*s\"", (int) raw->len, raw->data);
+            LXTLOG("Using raw value \"%.*s\"", (int) raw->len, raw->data);
             *arg = *raw;
 
         } else {
@@ -98,7 +98,7 @@ ngx_http_echo_eval_cmd_args(ngx_http_request_t *r,
             }
         }
 
-        logInfo("pushed arg: %.*s", (int) arg->len, arg->data);
+        LXTLOG("pushed arg: %.*s", (int) arg->len, arg->data);
     }
 
     return NGX_OK;

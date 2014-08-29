@@ -1,4 +1,4 @@
-#include "logInfo.h"
+#include <logInfo.h>
 #ifndef DDEBUG
 #define DDEBUG 0
 #endif
@@ -48,10 +48,10 @@ ngx_http_echo_timer_elapsed_variable(ngx_http_request_t *r,
 
     tp = ngx_timeofday();
 
-    logInfo("old sec msec: %ld %d\n", (long) ctx->timer_begin.sec,
+    LXTLOG("old sec msec: %ld %d\n", (long) ctx->timer_begin.sec,
        (int) ctx->timer_begin.msec);
 
-    logInfo("new sec msec: %ld %d\n", (long) tp->sec, (int) tp->msec);
+    LXTLOG("new sec msec: %ld %d\n", (long) tp->sec, (int) tp->msec);
 
     ms = (ngx_msec_int_t)
              ((tp->sec - ctx->timer_begin.sec) * 1000 +
@@ -81,7 +81,7 @@ ngx_int_t
 ngx_http_echo_exec_echo_reset_timer(ngx_http_request_t *r,
     ngx_http_echo_ctx_t *ctx)
 {
-    logInfo("Exec timer...");
+    LXTLOG("Exec timer...");
 
     /* force the ngx timer to update */
 

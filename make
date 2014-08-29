@@ -6,4 +6,4 @@ then
 make install
 fi
 killall -9 nginx;/usr/local/nginx/sbin/nginx
-curl -i 192.168.125.18/echo
+curl -i localhost/echo

@@ -1,4 +1,4 @@
-#include "logInfo.h"
+#include <logInfo.h>
 
 /*
  * Copyright (C) Yichun Zhang (agentzh)
@@ -77,7 +77,7 @@ ngx_http_echo_exec_echo_subrequest_async(ngx_http_request_t *r,
         return rc;
     }
 
-    logInfo("location: %.*s",
+    LXTLOG("location: %.*s",
         (int) parsed_sr->location->len,
         parsed_sr->location->data);
 
@@ -165,7 +165,7 @@ ngx_http_echo_exec_echo_subrequest(ngx_http_request_t *r,
      *  sr_ctx->run_post_subrequest = 0
      */
 
-    logInfo("creating sr ctx for %.*s: %p", (int) parsed_sr->location->len,
+    LXTLOG("creating sr ctx for %.*s: %p", (int) parsed_sr->location->len,
             parsed_sr->location->data, sr_ctx);
 
     psr = ngx_palloc(r->pool, sizeof(ngx_http_post_subrequest_t));
@@ -264,7 +264,7 @@ ngx_http_echo_parse_subrequest_spec(ngx_http_request_t *r,
             }
 
             if (ngx_strncmp("-f", arg->data, arg->len) == 0) {
-              logInfo("found option -f");
+              LXTLOG("found option -f");
               to_write = &body_file;
               expecting_opt = 0;
               continue;
@@ -308,7 +308,7 @@ ngx_http_echo_parse_subrequest_spec(ngx_http_request_t *r,
 
     } else if (body_file != NULL && body_file->len) {
 
-        logInfo("body_file defined %.*s", (int) body_file->len, body_file->data);
+        LXTLOG("body_file defined %.*s", (int) body_file->len, body_file->data);
 
         body_file->data = ngx_http_echo_rebase_path(r->pool, body_file->data,
                                                     body_file->len, &len);
@@ -319,7 +319,7 @@ ngx_http_echo_parse_subrequest_spec(ngx_http_request_t *r,
 
         body_file->len = len;
 
-        logInfo("after rebase, the path becomes %.*s", (int) body_file->len,
+        LXTLOG("after rebase, the path becomes %.*s", (int) body_file->len,
            body_file->data);
 
         rb = ngx_pcalloc(r->pool, sizeof(ngx_http_request_body_t));
@@ -350,7 +350,7 @@ ngx_http_echo_parse_subrequest_spec(ngx_http_request_t *r,
             return NGX_ERROR;
         }
 
-        logInfo("file content size: %d", (int) of.size);
+        LXTLOG("file content size: %d", (int) of.size);
 
         parsed_sr->content_length_n = (ssize_t) of.size;
 
@@ -445,7 +445,7 @@ ngx_http_echo_adjust_subrequest(ngx_http_request_t *sr,
         }
     }
 
-    logInfo("subrequest body: %p", sr->request_body);
+    LXTLOG("subrequest body: %p", sr->request_body);
 
     return NGX_OK;
 }
@@ -565,14 +565,14 @@ ngx_http_echo_exec_abort_parent(ngx_http_request_t *r,
     ngx_chain_t                     *out = NULL;
     /* ngx_int_t                       rc; */
 
-    logInfo("aborting parent...");
+    LXTLOG("aborting parent...");
 
     if (r == r->main || r->parent == NULL) {
         return NGX_OK;
     }
 
     if (r->parent->postponed) {
-        logInfo("Found parent->postponed...");
+        LXTLOG("Found parent->postponed...");
 
         saved_data = r->connection->data;
         ppr = NULL;
@@ -583,13 +583,13 @@ ngx_http_echo_exec_abort_parent(ngx_http_request_t *r,
 
             if (pr->request == r) {
                 /* r->parent->postponed->next = pr; */
-                logInfo("found the current subrequest");
+                LXTLOG("found the current subrequest");
                 out = pr->out;
                 continue;
             }
 
             /* r->connection->data = pr->request; */
-            logInfo("finalizing the subrequest...");
+            LXTLOG("finalizing the subrequest...");
             ngx_http_upstream_create(pr->request);
             pr->request->upstream = NULL;
 
@@ -610,7 +610,7 @@ ngx_http_echo_exec_abort_parent(ngx_http_request_t *r,
     r->connection->buffered = 0;
 
     if (out != NULL) {
-        logInfo("trying to send more stuffs for the parent");
+        LXTLOG("trying to send more stuffs for the parent");
         ngx_http_output_filter(r->parent, out);
     }
     */
@@ -621,7 +621,7 @@ ngx_http_echo_exec_abort_parent(ngx_http_request_t *r,
         r->connection->data = saved_data;
     }
 
-    logInfo("terminating the parent request");
+    LXTLOG("terminating the parent request");
 
     return ngx_http_echo_send_chain_link(r, ctx, NULL /* indicate LAST */);
 
@@ -688,7 +688,7 @@ ngx_http_echo_exec_exec(ngx_http_request_t *r,
         ngx_memzero(r->ctx, sizeof(void *) * ngx_http_max_module);
 #endif
 
-        logInfo("named location: %.*s, c:%d", (int) uri->len, uri->data,
+        LXTLOG("named location: %.*s, c:%d", (int) uri->len, uri->data,
                 (int) r->main->count);
 
         return ngx_http_named_location(r, uri);
@@ -740,7 +740,7 @@ ngx_http_echo_set_content_length_header(ngx_http_request_t *r, off_t len)
 
     h->hash = ngx_http_echo_content_length_hash;
 
-    logInfo("r content length: %.*s",
+    LXTLOG("r content length: %.*s",
             (int)r->headers_in.content_length->value.len,
             r->headers_in.content_length->value.data);
 

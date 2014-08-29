@@ -1,4 +1,4 @@
-#include "logInfo.h"
+#include <logInfo.h>
 #ifndef DDEBUG
 #define DDEBUG 0
 #endif
@@ -23,7 +23,7 @@ ngx_http_echo_echo_init(ngx_conf_t *cf)
     static u_char space_str[]   = " ";
     static u_char newline_str[] = "\n";
 
-    logInfo("global init...");
+    LXTLOG("global init...");
 
     ngx_memzero(&ngx_http_echo_space_buf, sizeof(ngx_buf_t));
 

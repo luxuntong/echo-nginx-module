@@ -1,4 +1,4 @@
-#include "logInfo.h"
+#include <logInfo.h>
 #ifndef DDEBUG
 #define DDEBUG 0
 #endif
@@ -78,7 +78,7 @@ ngx_http_echo_exec_echo_foreach_split(ngx_http_request_t *r,
 
     compound  = &computed_arg_elts[1];
 
-    logInfo("HEY coumpound len: %u", (int) compound->len);
+    LXTLOG("HEY coumpound len: %u", (int) compound->len);
 
     ctx->foreach = ngx_palloc(r->pool, sizeof(ngx_http_echo_foreach_ctx_t));
 
@@ -103,10 +103,10 @@ ngx_http_echo_exec_echo_foreach_split(ngx_http_request_t *r,
     while ((last = ngx_http_echo_strlstrn(pos, end, delimiter->data,
                                           delimiter->len - 1)) != NULL)
     {
-        logInfo("entered the loop");
+        LXTLOG("entered the loop");
 
         if (last == pos) {
-            logInfo("!!! len == 0");
+            LXTLOG("!!! len == 0");
             pos = last + delimiter->len;
             continue;
         }
@@ -172,7 +172,7 @@ ngx_http_echo_exec_echo_end(ngx_http_request_t *r,
         return NGX_OK;
     }
 
-    logInfo("echo_end: ++ next_choice (total: %u): %u",
+    LXTLOG("echo_end: ++ next_choice (total: %u): %u",
        (unsigned) ctx->foreach->choices->nelts,
        (unsigned) ctx->foreach->next_choice);
 

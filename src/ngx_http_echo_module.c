@@ -1,4 +1,4 @@
-#include "logInfo.h"
+#include <logInfo.h>
 
 /*
  * Copyright (C) Yichun Zhang (agentzh)
@@ -321,16 +321,16 @@ ngx_http_echo_helper(ngx_http_echo_opcode_t opcode,
         }
 
         if (cat == echo_handler_cmd) {
-            logInfo("registering the content handler");
+            LXTLOG("registering the content handler");
             /* register the content handler */
             clcf = ngx_http_conf_get_module_loc_conf(cf,
                                                      ngx_http_core_module);
 
-            logInfo("registering the content handler (2)");
+            LXTLOG("registering the content handler (2)");
             clcf->handler = ngx_http_echo_handler;
 
         } else {
-            logInfo("filter used = 1");
+            LXTLOG("filter used = 1");
             emcf->requires_filter = 1;
         }
     }
@@ -364,7 +364,7 @@ ngx_http_echo_helper(ngx_http_echo_opcode_t opcode,
 
         arg->raw_value = raw_args[i];
 
-        logInfo("found raw arg %s", raw_args[i].data);
+        LXTLOG("found raw arg %s", raw_args[i].data);
 
         arg->lengths = NULL;
         arg->values  = NULL;
@@ -401,7 +401,7 @@ ngx_http_echo_echo(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         elcf->seen_leading_output = 1;
     }
 
-    logInfo("in echo_echo...");
+    LXTLOG("in echo_echo...");
     return ngx_http_echo_helper(echo_opcode_echo, echo_handler_cmd,
                                 cf, cmd, conf);
 }
@@ -417,7 +417,7 @@ ngx_http_echo_echo_request_body(ngx_conf_t *cf, ngx_command_t *cmd,
         elcf->seen_leading_output = 1;
     }
 
-    logInfo("in echo_echo_request_body...");
+    LXTLOG("in echo_echo_request_body...");
     return ngx_http_echo_helper(echo_opcode_echo_request_body, echo_handler_cmd,
                                 cf, cmd, conf);
 }
@@ -426,7 +426,7 @@ ngx_http_echo_echo_request_body(ngx_conf_t *cf, ngx_command_t *cmd,
 static char *
 ngx_http_echo_echo_sleep(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
-    logInfo("in echo_sleep...");
+    LXTLOG("in echo_sleep...");
     return ngx_http_echo_helper(echo_opcode_echo_sleep, echo_handler_cmd,
                                 cf, cmd, conf);
 }
@@ -441,7 +441,7 @@ ngx_http_echo_echo_flush(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         elcf->seen_leading_output = 1;
     }
 
-    logInfo("in echo_flush...");
+    LXTLOG("in echo_flush...");
     return ngx_http_echo_helper(echo_opcode_echo_flush, echo_handler_cmd,
                                 cf, cmd, conf);
 }
@@ -451,7 +451,7 @@ static char *
 ngx_http_echo_echo_blocking_sleep(ngx_conf_t *cf, ngx_command_t *cmd,
     void *conf)
 {
-    logInfo("in echo_blocking_sleep...");
+    LXTLOG("in echo_blocking_sleep...");
     return ngx_http_echo_helper(echo_opcode_echo_blocking_sleep,
                                 echo_handler_cmd, cf, cmd, conf);
 }
@@ -468,7 +468,7 @@ ngx_http_echo_echo_reset_timer(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 static char *
 ngx_http_echo_echo_before_body(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
-    logInfo("processing echo_before_body directive...");
+    LXTLOG("processing echo_before_body directive...");
     return ngx_http_echo_helper(echo_opcode_echo_before_body, echo_filter_cmd,
                                 cf, cmd, conf);
 }

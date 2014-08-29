@@ -1,4 +1,4 @@
-#include "logInfo.h"
+#include <logInfo.h>
 
 /*
  * Copyright (C) Yichun Zhang (agentzh)
@@ -33,7 +33,7 @@ ngx_http_echo_wev_handler(ngx_http_request_t *r)
     ngx_int_t                    rc;
     ngx_http_echo_ctx_t         *ctx;
 
-    logInfo("wev handler");
+    LXTLOG("wev handler");
 
     ctx = ngx_http_get_module_ctx(r, ngx_http_echo_module);
 
@@ -42,7 +42,7 @@ ngx_http_echo_wev_handler(ngx_http_request_t *r)
         return;
     }
 
-    logInfo("waiting: %d, done: %d", (int) ctx->waiting, (int) ctx->done);
+    LXTLOG("waiting: %d, done: %d", (int) ctx->waiting, (int) ctx->done);
 
     if (ctx->waiting && ! ctx->done) {
 
@@ -71,7 +71,7 @@ ngx_http_echo_wev_handler(ngx_http_request_t *r)
 
     rc = ngx_http_echo_run_cmds(r);
 
-    logInfo("rc: %d", (int) rc);
+    LXTLOG("rc: %d", (int) rc);
 
     if (rc == NGX_ERROR || rc == NGX_DONE) {
         ngx_http_finalize_request(r, rc);
@@ -79,7 +79,7 @@ ngx_http_echo_wev_handler(ngx_http_request_t *r)
     }
 
     if (rc == NGX_AGAIN) {
-        logInfo("mark busy %d for %.*s", (int) ctx->next_handler_cmd,
+        LXTLOG("mark busy %d for %.*s", (int) ctx->next_handler_cmd,
            (int) r->uri.len,
            r->uri.data);
 
@@ -87,13 +87,13 @@ ngx_http_echo_wev_handler(ngx_http_request_t *r)
         ctx->done = 0;
 
     } else {
-        logInfo("mark ready %d", (int) ctx->next_handler_cmd);
+        LXTLOG("mark ready %d", (int) ctx->next_handler_cmd);
         ctx->waiting = 0;
         ctx->done = 1;
 
-        logInfo("finalizing with rc %d", (int) rc);
+        LXTLOG("finalizing with rc %d", (int) rc);
 
-        logInfo("finalize request %.*s with %d", (int) r->uri.len, r->uri.data,
+        LXTLOG("finalize request %.*s with %d", (int) r->uri.len, r->uri.data,
                 (int) rc);
 
         ngx_http_finalize_request(r, rc);
@@ -107,12 +107,12 @@ ngx_http_echo_handler(ngx_http_request_t *r)
     ngx_int_t                    rc;
     ngx_http_echo_ctx_t         *ctx;
 
-    logInfo("subrequest in memory: %d", (int) r->subrequest_in_memory);
-	logInfo("hello");
+    LXTLOG("subrequest in memory: %d", (int) r->subrequest_in_memory);
+	LXTLOG("hello");
     rc = ngx_http_echo_run_cmds(r);
 
-    logInfo("run cmds returned %d", (int) rc);
-	logInfo("hello :%s", "hello world");
+    LXTLOG("run cmds returned %d", (int) rc);
+	LXTLOG("hello :%s", "hello world");
     if (rc == NGX_ERROR
         || rc == NGX_OK
         || rc == NGX_DONE
@@ -137,11 +137,11 @@ ngx_http_echo_handler(ngx_http_request_t *r)
     r->main->count++;
 #endif
 
-    logInfo("%d", r->connection->destroyed);
-    logInfo("%d", r->done);
+    LXTLOG("%d", r->connection->destroyed);
+    LXTLOG("%d", r->done);
 
     if (ctx) {
-        logInfo("mark busy %d for %.*s", (int) ctx->next_handler_cmd,
+        LXTLOG("mark busy %d for %.*s", (int) ctx->next_handler_cmd,
            (int) r->uri.len,
            r->uri.data);
 
@@ -182,7 +182,7 @@ ngx_http_echo_run_cmds(ngx_http_request_t *r)
         ngx_http_set_ctx(r, ctx, ngx_http_echo_module);
     }
 
-    logInfo("exec handler: %.*s: %i", (int) r->uri.len, r->uri.data,
+    LXTLOG("exec handler: %.*s: %i", (int) r->uri.len, r->uri.data,
             (int) ctx->next_handler_cmd);
 
     cmd_elts = cmds->elts;
@@ -224,7 +224,7 @@ ngx_http_echo_run_cmds(ngx_http_request_t *r)
         case echo_opcode_echo:
             /* XXX moved the following code to a separate
              * function */
-            logInfo("found echo opcode");
+            LXTLOG("found echo opcode");
             rc = ngx_http_echo_exec_echo(r, ctx, computed_args,
                                          0 /* in filter */, opts);
             break;
@@ -242,7 +242,7 @@ ngx_http_echo_run_cmds(ngx_http_request_t *r)
                 goto read_request_body;
             }
 
-            logInfo("found opcode echo location async...");
+            LXTLOG("found opcode echo location async...");
             rc = ngx_http_echo_exec_echo_location_async(r, ctx,
                                                         computed_args);
             break;
@@ -267,7 +267,7 @@ ngx_http_echo_run_cmds(ngx_http_request_t *r)
                 goto read_request_body;
             }
 
-            logInfo("found opcode echo subrequest async...");
+            LXTLOG("found opcode echo subrequest async...");
             rc = ngx_http_echo_exec_echo_subrequest_async(r, ctx,
                                                           computed_args);
             break;
@@ -326,7 +326,7 @@ read_request_body:
 #if nginx_version >= 8011
             r->main->count--;
 #endif
-            logInfo("read request body: %d", (int) rc);
+            LXTLOG("read request body: %d", (int) rc);
 
             if (rc == NGX_OK) {
                 continue;
@@ -345,7 +345,7 @@ read_request_body:
             break;
 
         case echo_opcode_echo_exec:
-            logInfo("echo_exec");
+            LXTLOG("echo_exec");
             return ngx_http_echo_exec_exec(r, ctx, computed_args);
 
         default:
@@ -384,16 +384,16 @@ ngx_http_echo_post_subrequest(ngx_http_request_t *r,
     ngx_http_request_t          *pr;
     ngx_http_echo_ctx_t         *pr_ctx;
 
-    logInfo("echo post_subrequest: %.*s", (int) r->uri.len, r->uri.data);
+    LXTLOG("echo post_subrequest: %.*s", (int) r->uri.len, r->uri.data);
 
     if (ctx->run_post_subrequest) {
-        logInfo("already run post_subrequest: %p: %.*s", ctx,
+        LXTLOG("already run post_subrequest: %p: %.*s", ctx,
            (int) r->uri.len, r->uri.data);
 
         return rc;
     }
 
-    logInfo("setting run_post_subrequest to 1 for %p for %.*s", ctx,
+    LXTLOG("setting run_post_subrequest to 1 for %p for %.*s", ctx,
        (int) r->uri.len, r->uri.data);
 
     ctx->run_post_subrequest = 1;
@@ -405,7 +405,7 @@ ngx_http_echo_post_subrequest(ngx_http_request_t *r,
         return NGX_ERROR;
     }
 
-    logInfo("mark ready %d", (int) pr_ctx->next_handler_cmd);
+    LXTLOG("mark ready %d", (int) pr_ctx->next_handler_cmd);
 
     pr_ctx->waiting = 0;
     pr_ctx->done = 1;
